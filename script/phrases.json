@@ -1,9 +1,29 @@
 [
-  {"type":"win","text":"¡Punto para {name}!"},
-  {"type":"win","text":"{name} mete presión 🔥"},
-  {"type":"win","text":"{name} domina la ronda 👑"},
-  {"type":"lose","text":"CPU +1 💥"},
-  {"type":"lose","text":"La CPU te ganó esta 😅"},
-  {"type":"tie","text":"Empate 🤝"},
-  {"type":"tie","text":"Nada por aquí…"}
+  { "type": "pointPlayer", "text": "{name} ganaste un punto...",   "color": "#87af4b" },
+  { "type": "pointPlayer", "text": "{name}...",                    "color": "#87af4b" },
+  { "type": "pointPlayer", "text": "{name}. igual no ganaras",     "color": "#87af4b" },
+  { "type": "pointPlayer", "text": ":((((",                 "color": "#87af4b" },
+
+  { "type": "pointCpu",    "text": "malisimo",                    "color": "#c92c49d3" },
+  { "type": "pointCpu",    "text": "malo",               "color": "#c92c49d3" },
+  { "type": "pointCpu",    "text": "casi casi",           "color": "#c92c49d3" },
+  { "type": "pointCpu",    "text": "nabo",          "color": "#c92c49d3" },
+
+  { "type": "tie",         "text": "🤝",                          "color": "#6b5b95" },
+  { "type": "tie",         "text": "copion",                      "color": "#6b5b95" },
+  { "type": "tie",         "text": "¡chicle!",                    "color": "#6b5b95" },
+
+  { "type": "newPlayer",   "text": "{name}. que nombre gracioso",         "color": "#ff6e61" },
+  { "type": "newPlayer",   "text": "preparate {name}, porque seras vencido!",  "color": "#ff6e61" },
+  { "type": "newPlayer",   "text": "{name}. no tienes oportunidad",            "color": "#ff6e61" },
+
+  { "type": "win",         "text": "¡{name}!",   "color": "##87af4b" },
+  { "type": "win",         "text": "no te creas tanto {name}",          "color": "##87af4b" },
+  { "type": "win",         "text": "imposible...,{name} como pudiste?",             "color": "##87af4b" },
+
+  { "type": "lose",        "text": "siempre gano yo",                 "color": "#c92c49d3" },
+  { "type": "lose",        "text": "te faltan 100 años para acercarte un poco",  "color": "#c92c49d3" },
+  { "type": "lose",        "text": "no me ganaras nunca {name}",      "color": "#c92c49d3" },
+
+  { "type": "brrHistorial","text": "Pasado pisado",           "color": "#c92c49d3" }
 ]

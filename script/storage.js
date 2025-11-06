@@ -1,41 +1,59 @@
-/* claves de storage */
-const SAVE='rps_save_v1', HIST='rps_history_v1', PHRASES='rps_phrases';
+/* ===== Claves de LocalStorage (humanas) ===== */
+const SAVE       = 'rps_save_v1';         // estado de partida para "Continuar"
+const HISTORIAL  = 'rps_historial_v1';    // historial de partidas
+const PREFERENCIAS = 'rps_prefs_v1';      // preferencias de usuario (nombre)
 
-/* estado de partida */
-window.saveState = function(s){
-  try{ localStorage.setItem(SAVE, JSON.stringify({...s,ts:Date.now()})); }
-  catch(_){ toast('No se pudo guardar el estado'); }
-};
-window.loadState = function(){
-  try{ return JSON.parse(localStorage.getItem(SAVE)||'null'); }
-  catch(_){ return null; }
-};
-window.clearSaveState = function(){
-  try{ localStorage.removeItem(SAVE); } catch(_){}
+/* ===== Estado de partida ===== */
+window.saveState = function (estado) {
+  try {
+    localStorage.setItem(SAVE, JSON.stringify({ ...estado, ts: Date.now() }));
+  } catch (_) { /* silencioso */ }
 };
 
-/* historial de partidas */
-window.pushHistory = function(entry){
-  try{
-    const arr = JSON.parse(localStorage.getItem(HIST)||'[]');
-    arr.push({ts:Date.now(), ...entry});
-    localStorage.setItem(HIST, JSON.stringify(arr));
-  }catch(_){ toast('No se pudo actualizar el historial'); }
+window.loadState = function () {
+  try { return JSON.parse(localStorage.getItem(SAVE) || 'null'); }
+  catch (_) { return null; }
 };
-window.readHistory = function(){
-  try{ return JSON.parse(localStorage.getItem(HIST)||'[]'); }
-  catch(_){ return []; }
-};
-window.clearHistory = function(){
-  try{ localStorage.removeItem(HIST); } catch(_){}
-};
-window.fmtDate = ts => new Date(ts).toLocaleDateString();
 
-/* frases (json cacheado) */
-window.savePhrases = function(arr){
-  try{ localStorage.setItem(PHRASES, JSON.stringify(arr)); } catch(_){}
+window.clearSaveState = function () {
+  try { localStorage.removeItem(SAVE); } catch (_) {}
 };
-window.loadPhrases = function(){
-  try{ return JSON.parse(localStorage.getItem(PHRASES)||'null'); }
-  catch(_){ return null; }
+
+/* ===== Historial =====
+   Estructura de cada entrada:
+   { ts:Number, nombre:String, puntosJugador:Number, puntosCpu:Number, huyo:Boolean }
+*/
+window.pushHistorial = function (entrada) {
+  try {
+    const arr = JSON.parse(localStorage.getItem(HISTORIAL) || '[]');
+    arr.push({ ts: Date.now(), ...entrada });
+    localStorage.setItem(HISTORIAL, JSON.stringify(arr));
+  } catch (_) { /* silencioso */ }
+};
+
+window.leerHistorial = function () {
+  try { return JSON.parse(localStorage.getItem(HISTORIAL) || '[]'); }
+  catch (_) { return []; }
+};
+
+window.borrarHistorial = function () {
+  try { localStorage.removeItem(HISTORIAL); } catch (_) {}
+};
+
+window.formatearFecha = ts => new Date(ts).toLocaleDateString();
+
+/* ===== Preferencias ===== */
+window.guardarNombreJugador = function (nombre) {
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFERENCIAS) || '{}');
+    prefs.playerName = nombre;
+    localStorage.setItem(PREFERENCIAS, JSON.stringify(prefs));
+  } catch (_) {}
+};
+
+window.cargarNombreJugador = function () {
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFERENCIAS) || 'null');
+    return prefs && prefs.playerName;
+  } catch (_) { return null; }
 };

@@ -1,25 +1,50 @@
-/* selector corto */
 window.$ = s => document.querySelector(s);
 
-/* toast: usa Toastify si está; si no, fallback DOM (sin console) */
-(function(){
-  function fallbackToast(msg){
-    const t=document.createElement('div');
-    t.textContent=msg;
-    t.style.cssText='position:fixed;top:12px;right:12px;background:#111;color:#fff;padding:10px 12px;border-radius:10px;font:600 13px/1.2 system-ui;z-index:9999;opacity:0;transition:opacity .15s';
-    document.body.appendChild(t);
-    requestAnimationFrame(()=>t.style.opacity=1);
-    setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),180)},1800);
-  }
-  window.toast = function(msg){
-    try{
-      if(window.Toastify){ Toastify({text:msg,gravity:'top',position:'right',close:true}).showToast(); }
-      else{ fallbackToast(msg); }
-    }catch(_){ fallbackToast(msg); }
-  };
-})();
+window.toast = function (msg, opts) {
+  const bg =
+    (opts && (opts.bg || opts.color || opts.background)) || undefined;
 
-/* rutas de imágenes */
+  Toastify({
+    text: msg,
+    gravity: "top",
+    position: "right",
+    close: true,
+
+    style: bg ? { background: bg } : undefined
+  }).showToast();
+};
+
+
+window.PHRASES = [];
+
+window.setPhrases = arr => {
+  if (Array.isArray(arr) && arr.length) window.PHRASES = arr;
+};
+
+
+window.getPhraseObj = (type, name) => {
+  const list = (window.PHRASES || []).filter(x => x.type === type);
+  const o = list.length ? list[(Math.random() * list.length) | 0] : null;
+  return {
+    text: (o?.text || defaultTextFor(type)).replace('{name}', name || 'Jugador'),
+    color: o?.color
+  };
+};
+
+function defaultTextFor(type){
+  switch(type){
+    case 'pointPlayer': return '¡Punto!';
+    case 'pointCpu':    return 'CPU +1';
+    case 'win':         return '¡Victoria!';
+    case 'lose':        return 'Derrota...';
+    case 'tie':         return 'Empate';
+    case 'newPlayer':   return '{name} quiere reclamar la corona';
+    case 'brrHistorial':return 'Historial borrado';
+    default:            return '';
+  }
+}
+
+
 window.ASSETS = {
   faces:{
     neutral:'style/assets/emotes/empate.png',
@@ -33,24 +58,42 @@ window.ASSETS = {
     R:'style/assets/piedra.png',
     P:'style/assets/papel.png',
     S:'style/assets/tijeras.png',
-    X:'style/assets/vacio.png' /* carta vacía */
+    X:'style/assets/vacio.png'
   }
 };
 
-/* setters de imagen (jugador/cpu y jugadas) */
-window.setFace = (img, key)=>{ img.src = ASSETS.faces[key] || ASSETS.faces.neutral; };
-window.setPick = (img, sym)=>{ img.src = sym ? ASSETS.cards[sym] : ASSETS.cards.X; };
 
-/* frases (pueden venir de JSON o defaults) */
-window.PHRASES = [
-  {type:'win',  text:'¡Punto para {name}!'},
-  {type:'win',  text:'{name} domina la ronda 👑'},
-  {type:'lose', text:'CPU +1 💥'},
-  {type:'tie',  text:'Empate 🤝'}
-];
-window.setPhrases = arr => { if(Array.isArray(arr) && arr.length){ window.PHRASES = arr; } };
-window.getPhrase = (type, name) => {
-  const pool = window.PHRASES.filter(x=>x.type===type);
-  const item = pool[(Math.random()*pool.length)|0] || {text:''};
-  return (item.text||'').replace('{name}', name||'Jugador');
+window.setFace = (imgEl, key)=>{
+  if(imgEl) imgEl.src = ASSETS.faces[key] || ASSETS.faces.neutral;
+};
+
+window.setPick = (imgEl, sym)=>{
+  if(imgEl) imgEl.src = sym ? ASSETS.cards[sym] : ASSETS.cards.X;
+};
+
+window.SFX = {
+  beep: new Audio('style/assets/sounds/beep.wav'),
+  music: new Audio(encodeURI('style/assets/sounds/Zambolino - Above The Sky (freetouse.com).mp3'))
+};
+
+SFX.beep.preload = 'auto';
+SFX.music.preload = 'auto';
+SFX.beep.volume = 1;
+SFX.music.volume = 0.35;
+SFX.music.loop = true;
+
+
+window.toggleMusic = function () {
+  const btn = document.getElementById('btnMusic');
+  if (!btn) return;
+
+  if (SFX.music.paused) {
+    SFX.music.play().catch(()=>{});
+    btn.textContent = '⏸'; 
+    btn.setAttribute('aria-pressed', 'true');
+  } else {
+    SFX.music.pause();
+    btn.textContent = '▶';
+    btn.setAttribute('aria-pressed', 'false');
+  }
 };

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Piedra · Papel · Tijera — 4×</title>
-
+  <title>piedra papel o tijera</title>
+  <link rel="icon" type="image/png" href="style/assets/emotes/ganador.png">
   <link rel="stylesheet" href="style/style.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js" defer></script>
@@ -14,71 +14,58 @@
   <script src="script/rps.js" defer></script>
 </head>
 <body>
-  <div class="app">
-    <header class="app-header"><h1>Piedra · Papel · Tijera — 4×</h1></header>
-
-    <section class="board">
-      <!-- Jugador -->
-      <div class="panel">
-        <div class="avatar">
-          <div class="face-box">
-            <img id="playerImg" class="face-img" src="style/assets/emotes/empate.png" alt="estado jugador"/>
-          </div>
-          <div class="meta">
-            <h3><input id="playerName" class="name-input" type="text" value="Jugador" maxlength="11"></h3>
-            <div class="score">Puntos: <span id="playerScore">0</span></div>
-          </div>
-        </div>
-        <div class="pick"><img id="playerPick" class="pick-img" src="style/assets/vacio.png" alt="jugada jugador"/></div>
+<header>
+  <button id="btnMusic" class="btn-music" aria-pressed="false" onclick="toggleMusic()">▶</button>
+</header>
+  <section class="board">
+    <!-- PLAYER -->
+    <div class="avatar player-row">
+      <img id="playerImg" class="face-img" src="style/assets/emotes/empate.png" alt="tu cara"/>
+      <div class="pick"><img id="playerPick" class="pick-img" src="style/assets/vacio.png" alt="tu mano"/></div>
+      <div class="meta">
+        <h3><input id="playerName" class="name-input" type="text" value="Jugador" maxlength="20"></h3>
+        <div class="score">Puntos: <span id="playerScore">0</span></div>
       </div>
+    </div>
 
-      <!-- Centro (timer horizontal + cara de fin de partida) -->
-      <div class="panel center">
-        <div class="counter" id="timer">
-          <span id="timerText">00:03</span>
-          <span id="timerFace" class="timer-face"></span>
-        </div>
-      </div>
+    <!-- TIMER -->
+    <div class="counter" id="timer">
+      <span id="timerText">00:03</span>
+    </div>
 
-      <!-- CPU (cara invertida) -->
-      <div class="panel">
-        <div class="avatar cpu">
-          <div class="face-box">
-            <img id="cpuImg" class="face-img flip-x" src="style/assets/emotes/empate.png" alt="estado cpu"/>
-          </div>
-          <div class="meta">
-            <h3>CPU</h3>
-            <div class="score">Puntos: <span id="cpuScore">0</span></div>
-          </div>
-        </div>
-        <div class="pick"><img id="cpuPick" class="pick-img" src="style/assets/vacio.png" alt="jugada cpu"/></div>
+    <!-- CPU -->
+    <div class="avatar cpu-row">
+      <div class="meta">
+        <h3>CPU</h3>
+        <div class="score">Puntos: <span id="cpuScore">0</span></div>
       </div>
-    </section>
+      <div class="pick"><img id="cpuPick" class="pick-img flip-x" src="style/assets/vacio.png" alt="mano cpu"/></div>
+      <img id="cpuImg" class="face-img flip-x" src="style/assets/emotes/empate.png" alt="cara cpu"/>
+    </div>
+  </section>
 
-    <!-- Controles -->
-    <section class="controls">
-      <div class="bar choices">
-        <button class="choice" id="btnR"><img class="bicon pixel" src="style/assets/piedra.png"  alt="Piedra"/><span class="bcount" id="cntR">0</span></button>
-        <button class="choice" id="btnP"><img class="bicon pixel" src="style/assets/papel.png"   alt="Papel"/><span class="bcount" id="cntP">0</span></button>
-        <button class="choice" id="btnS"><img class="bicon pixel" src="style/assets/tijeras.png" alt="Tijeras"/><span class="bcount" id="cntS">0</span></button>
-      </div>
-      <div class="bar utils">
-        <button class="util" id="btnStart">Repartir</button>
-        <button class="util" id="btnReset">Reiniciar</button>
-        <button class="util" id="btnContinue">Continuar</button>
-      </div>
-    </section>
+  <section class="controls">
+    <div class="btns choices">
+      <button class="choice" id="btnPiedra"><img class="choiceImg" src="style/assets/piedra.png"  alt="Piedra"/><span class="bcount" id="cntPiedra">0</span></button>
+      <button class="choice" id="btnPapel"><img class="choiceImg" src="style/assets/papel.png"   alt="Papel"/><span class="bcount" id="cntPapel">0</span></button>
+      <button class="choice" id="btnTijera"><img class="choiceImg" src="style/assets/tijeras.png" alt="Tijeras"/><span class="bcount" id="cntTijera">0</span></button>
+    </div>
+    <div class="btns utils">
+      <button class="util" id="btnStart">Repartir</button>
+      <button class="util" id="btnReset">Reiniciar</button>
+      <button class="util" id="btnContinue">Continuar</button>
+    </div>
+  </section>
 
-    <!-- Historial -->
-    <section class="history">
-      <details id="histDetails">
-        <summary>Historial de partidas</summary>
-        <div class="hist-actions">
-          <button type="button" class="util danger" id="btnClearHistory">Borrar historial</button>
-        </div>
-        <ul id="historyList"></ul>
-      </details>
-    </section>
-  </div>
+  <section class="history">
+    <details id="histDetails">
+      <summary>Historial de partidas</summary>
+      <div class="hist-actions">
+        <button type="button" class="util" id="btnClearHistory">Borrar historial</button>
+      </div>
+      <ul id="historyList"></ul>
+    </details>
+  </section>
+
 </body>
 </html>
