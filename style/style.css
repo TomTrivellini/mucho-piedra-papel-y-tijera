@@ -21,6 +21,9 @@ body {
   font-size:x-large
 }
 
+input, button{
+  font-family: 'Tiny5', sans-serif;
+}
 .board{
   display:grid;
   gap: 1vh;
@@ -31,7 +34,7 @@ body {
 }
 
 
-.avatar{
+.cont{
   background:var(--box);
   border-radius:25px;
   padding:1vh;
@@ -70,7 +73,8 @@ body {
 .name-input:focus{outline:2px dashed var(--ink)}
 .name-input:hover{color: var(--box);}
 
-.counter{
+.timer{
+
   height:10vh;
   width: 25vh;
   border-radius:1vh;

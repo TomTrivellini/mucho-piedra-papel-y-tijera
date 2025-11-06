@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>piedra papel o tijera</title>
+  
+  <title>piedra papel o tijeras de la muerte</title>
+  
   <link rel="icon" type="image/png" href="style/assets/emotes/ganador.png">
+  
   <link rel="stylesheet" href="style/style.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/toastify-js" defer></script>
@@ -14,35 +17,34 @@
   <script src="script/rps.js" defer></script>
 </head>
 <body>
+
 <header>
   <button id="btnMusic" class="btn-music" aria-pressed="false" onclick="toggleMusic()">▶</button>
+  
 </header>
   <section class="board">
-    <!-- PLAYER -->
-    <div class="avatar player-row">
+    <div class="cont player-row">
       <img id="playerImg" class="face-img" src="style/assets/emotes/empate.png" alt="tu cara"/>
       <div class="pick"><img id="playerPick" class="pick-img" src="style/assets/vacio.png" alt="tu mano"/></div>
-      <div class="meta">
+      
         <h3><input id="playerName" class="name-input" type="text" value="Jugador" maxlength="20"></h3>
         <div class="score">Puntos: <span id="playerScore">0</span></div>
-      </div>
+      
     </div>
 
-    <!-- TIMER -->
-    <div class="counter" id="timer">
+
+    <div class="timer" id="timer">
       <span id="timerText">00:03</span>
     </div>
 
-    <!-- CPU -->
-    <div class="avatar cpu-row">
-      <div class="meta">
-        <h3>CPU</h3>
+
+    <div class="cont cpu-row">
         <div class="score">Puntos: <span id="cpuScore">0</span></div>
-      </div>
       <div class="pick"><img id="cpuPick" class="pick-img flip-x" src="style/assets/vacio.png" alt="mano cpu"/></div>
       <img id="cpuImg" class="face-img flip-x" src="style/assets/emotes/empate.png" alt="cara cpu"/>
     </div>
   </section>
+
 
   <section class="controls">
     <div class="btns choices">
@@ -52,7 +54,7 @@
     </div>
     <div class="btns utils">
       <button class="util" id="btnStart">Repartir</button>
-      <button class="util" id="btnReset">Reiniciar</button>
+      <button class="util" id="btnReset">Escapar</button>
       <button class="util" id="btnContinue">Continuar</button>
     </div>
   </section>

@@ -17,13 +17,13 @@
   { "type": "newPlayer",   "text": "preparate {name}, porque seras vencido!",  "color": "#ff6e61" },
   { "type": "newPlayer",   "text": "{name}. no tienes oportunidad",            "color": "#ff6e61" },
 
-  { "type": "win",         "text": "¡{name}!",   "color": "##87af4b" },
-  { "type": "win",         "text": "no te creas tanto {name}",          "color": "##87af4b" },
-  { "type": "win",         "text": "imposible...,{name} como pudiste?",             "color": "##87af4b" },
+  { "type": "win",         "text": "¡{name}!",   "color": "#FB8B35" },
+  { "type": "win",         "text": "no te creas tanto {name}",          "color": "#FB8B35" },
+  { "type": "win",         "text": "imposible...,{name} como pudiste?", "color": "#FB8B35" },
 
-  { "type": "lose",        "text": "siempre gano yo",                 "color": "#c92c49d3" },
-  { "type": "lose",        "text": "te faltan 100 años para acercarte un poco",  "color": "#c92c49d3" },
-  { "type": "lose",        "text": "no me ganaras nunca {name}",      "color": "#c92c49d3" },
+  { "type": "lose",        "text": "siempre gano yo",                 "color": "#1a1a1a" },
+  { "type": "lose",        "text": "te faltan 100 años para acercarte un poco",  "color": "#1a1a1a" },
+  { "type": "lose",        "text": "no me ganaras nunca {name}",      "color": "#1a1a1a" },
 
   { "type": "brrHistorial","text": "Pasado pisado",           "color": "#c92c49d3" }
 ]

@@ -1,7 +1,5 @@
-//Helper 
-const id = sel => document.getElementById(sel);
+const getById = sel => document.getElementById(sel);
 
-// constantes de juego (palabras)
 const PIEDRA = 'PIEDRA';
 const PAPEL  = 'PAPEL';
 const TIJERA = 'TIJERA';
@@ -13,8 +11,8 @@ const normalizeHand = arr => Array.isArray(arr) ? arr.map(x=>{
   return (x===PIEDRA||x===PAPEL||x===TIJERA) ? x : null;
 }).filter(Boolean) : [];
 
-// memoria
-const S = {
+// Estado de la partida
+const State = {
   playerName: 'Jugador',
   player: { hand: [], score: 0 },
   cpu:    { hand: [], score: 0 },
@@ -24,16 +22,16 @@ const S = {
   timeLeft:    3
 };
 
-// DOM
-const el = {
-  playerName:  id('playerName'),
-  playerImg:   id('playerImg'),  playerScore: id('playerScore'), playerPick: id('playerPick'),
-  cpuImg:      id('cpuImg'),     cpuScore:    id('cpuScore'),    cpuPick:    id('cpuPick'),
-  cntPiedra:   id('cntPiedra'),  cntPapel:    id('cntPapel'),    cntTijera:  id('cntTijera'),
-  btnPiedra:   id('btnPiedra'),  btnPapel:    id('btnPapel'),    btnTijera:  id('btnTijera'),
-  btnStart:    id('btnStart'),   btnReset:    id('btnReset'),    btnContinue:id('btnContinue'),
-  timerText:   id('timerText'),
-  histDetails: id('histDetails'), historyList: id('historyList'), btnClearHistory: id('btnClearHistory')
+// Referencias DOM
+const elements = {
+  playerName:  getById('playerName'),
+  playerImg:   getById('playerImg'),  playerScore: getById('playerScore'), playerPick: getById('playerPick'),
+  cpuImg:      getById('cpuImg'),     cpuScore:    getById('cpuScore'),    cpuPick:    getById('cpuPick'),
+  cntPiedra:   getById('cntPiedra'),  cntPapel:    getById('cntPapel'),    cntTijera:  getById('cntTijera'),
+  btnPiedra:   getById('btnPiedra'),  btnPapel:    getById('btnPapel'),    btnTijera:  getById('btnTijera'),
+  btnStart:    getById('btnStart'),   btnReset:    getById('btnReset'),    btnContinue:getById('btnContinue'),
+  timerText:   getById('timerText'),
+  histDetails: getById('histDetails'), historyList: getById('historyList'), btnClearHistory: getById('btnClearHistory')
 };
 
 // util
@@ -53,70 +51,71 @@ const fmtClock = s => `00:${String(s).padStart(2,'0')}`;
 
 // snapshot y carga
 const snap = () => ({
-  playerName: el.playerName.value?.trim() || 'Jugador',
-  player: S.player, cpu: S.cpu,
-  gameActive: S.gameActive, roundActive: S.roundActive,
-  timeLeft: S.timeLeft,
-  incomplete: S.gameActive || S.roundActive
+  playerName: elements.playerName.value?.trim() || 'Jugador',
+  player: State.player, cpu: State.cpu,
+  gameActive: State.gameActive, roundActive: State.roundActive,
+  timeLeft: State.timeLeft,
+  incomplete: State.gameActive || State.roundActive
 });
 const hasSave = () => { const s = loadState(); return !!(s && s.incomplete); };
 
 //ui
 function updateCounts(){
-  const pc = count(S.player.hand);
-  el.cntPiedra.textContent = pc.PIEDRA;
-  el.cntPapel.textContent  = pc.PAPEL;
-  el.cntTijera.textContent = pc.TIJERA;
+  const pc = count(State.player.hand);
+  elements.cntPiedra.textContent = pc.PIEDRA;
+  elements.cntPapel.textContent  = pc.PAPEL;
+  elements.cntTijera.textContent = pc.TIJERA;
 
-  const on = S.roundActive;
-  el.btnPiedra.disabled = !on || pc.PIEDRA===0;
-  el.btnPapel.disabled  = !on || pc.PAPEL===0;
-  el.btnTijera.disabled = !on || pc.TIJERA===0;
+  const on = State.roundActive;
+  elements.btnPiedra.disabled = !on || pc.PIEDRA===0;
+  elements.btnPapel.disabled  = !on || pc.PAPEL===0;
+  elements.btnTijera.disabled = !on || pc.TIJERA===0;
 }
 
 function previewSavedCounts(){
   const s = loadState();
   if(!s || !s.incomplete || !s.player || !Array.isArray(s.player.hand)) return;
 
-  // contadores desde el SAVE (sin tocar S)
+  // contadores desde el SAVE (sin tocar State)
   const pc = count(s.player.hand);
-  el.cntPiedra.textContent = pc.PIEDRA;
-  el.cntPapel.textContent  = pc.PAPEL;
-  el.cntTijera.textContent = pc.TIJERA;
+  elements.cntPiedra.textContent = pc.PIEDRA;
+  elements.cntPapel.textContent  = pc.PAPEL;
+  elements.cntTijera.textContent = pc.TIJERA;
 
   // puntajes actuales del SAVE
-  el.playerScore.textContent = (s.player && typeof s.player.score==='number') ? s.player.score : 0;
-  el.cpuScore.textContent    = (s.cpu    && typeof s.cpu.score==='number')    ? s.cpu.score    : 0;
+  elements.playerScore.textContent = (s.player && typeof s.player.score==='number') ? s.player.score : 0;
+  elements.cpuScore.textContent    = (s.cpu    && typeof s.cpu.score==='number')    ? s.cpu.score    : 0;
 
   // elecciones bloqueadas hasta continuar
-  el.btnPiedra.disabled = true;
-  el.btnPapel.disabled  = true;
-  el.btnTijera.disabled = true;
+  elements.btnPiedra.disabled = true;
+  elements.btnPapel.disabled  = true;
+  elements.btnTijera.disabled = true;
 
   // reloj con tiempo restante real
   if (typeof s.timeLeft === 'number')
-    el.timerText.textContent = fmtClock(Math.max(0, s.timeLeft));
+    elements.timerText.textContent = fmtClock(Math.max(0, s.timeLeft));
 }
 
 function setControls(){
   const saved = hasSave();
+  const canContinue = saved && !State.roundActive;
 
-  if(saved && !S.gameActive){
-    el.btnStart.disabled    = true;    // hay SAVE → no Repartir
-    el.btnContinue.disabled = false;
-    el.btnReset.disabled    = false;
+  if(saved && !State.gameActive){
+    elements.btnStart.disabled    = true;    
+    elements.btnContinue.disabled = !canContinue;
+    elements.btnReset.disabled    = false;
   } else {
-    el.btnStart.disabled    = !!S.gameActive;
-    el.btnContinue.disabled = !saved;
-    el.btnReset.disabled    = !(S.gameActive || saved);
+    elements.btnStart.disabled    = !!State.gameActive;
+    elements.btnContinue.disabled = !canContinue;
+    elements.btnReset.disabled    = !(State.gameActive || saved);
   }
-  el.playerName.disabled = !!S.gameActive;
+  elements.playerName.disabled = !!State.gameActive;
 }
 
 function neutralBoard(){
-  setPick(el.playerPick,''); setPick(el.cpuPick,'');
-  setFace(el.playerImg,'neutral'); setFace(el.cpuImg,'neutral');
-  el.timerText.textContent = fmtClock(S.timeLeft);
+  setPick(elements.playerPick,''); setPick(elements.cpuPick,'');
+  setFace(elements.playerImg,'neutral'); setFace(elements.cpuImg,'neutral');
+  elements.timerText.textContent = fmtClock(State.timeLeft);
 }
 
 // mazo y reparto
@@ -128,56 +127,56 @@ function deck(){
 function deal(){
   const d=deck(), p=[], c=[];
   d.forEach((x,i)=>(i%2?p:c).push(x));
-  S.player.hand=p; S.cpu.hand=c; S.player.score=0; S.cpu.score=0;
-  el.playerScore.textContent='0'; el.cpuScore.textContent='0';
-  S.timeLeft=3;
+  State.player.hand=p; State.cpu.hand=c; State.player.score=0; State.cpu.score=0;
+  elements.playerScore.textContent='0'; elements.cpuScore.textContent='0';
+  State.timeLeft=3;
   neutralBoard(); updateCounts();
 }
 
 // juego
 function startGame(){
-  if(S.gameActive) return;
+  if(State.gameActive) return;
   deal();
-  S.gameActive=true; S.roundActive=false;
+  State.gameActive=true; State.roundActive=false;
   setControls(); saveState(snap()); startTurn(true);
 }
 
 function startTurn(resetTimer){
-  if(!S.player.hand.length && !S.cpu.hand.length) return endGame();
-  S.roundActive=true;
-  if(resetTimer) S.timeLeft=3;
+  if(!State.player.hand.length && !State.cpu.hand.length) return endGame();
+  State.roundActive=true;
+  if(resetTimer) State.timeLeft=3;
   neutralBoard(); updateCounts(); setControls(); runTick();
 }
 
 function runTick(){
-  if(S.countdown) clearInterval(S.countdown);
-  S.countdown = setInterval(()=>{
-    S.timeLeft = Math.max(0, S.timeLeft-1);
-    el.timerText.textContent = fmtClock(S.timeLeft);
+  if(State.countdown) clearInterval(State.countdown);
+  State.countdown = setInterval(()=>{
+    State.timeLeft = Math.max(0, State.timeLeft-1);
+    elements.timerText.textContent = fmtClock(State.timeLeft);
 
-    if (S.timeLeft === 1) {
+    if (State.timeLeft === 1) {
       try { SFX.beep.currentTime = 0; SFX.beep.play(); } catch(_){}
     }
 
     saveState(snap());
-    if(S.timeLeft===0){
-      clearInterval(S.countdown); S.countdown=null;
+    if(State.timeLeft===0){
+      clearInterval(State.countdown); State.countdown=null;
       onTimeout();
     }
   },1000);
 }
 
-function cpuChoose(){ const s=rand(S.cpu.hand); consume(S.cpu.hand,s); return s; }
+function cpuChoose(){ const s=rand(State.cpu.hand); consume(State.cpu.hand,s); return s; }
 
 function onTimeout(){
-  if(S.player.hand.length){
-    const i=(Math.random()*S.player.hand.length)|0;
-    const x=S.player.hand.splice(i,1)[0];
-    setPick(el.playerPick, toKey(x));  // assets usan R/P/S
+  if(State.player.hand.length){
+    const i=(Math.random()*State.player.hand.length)|0;
+    const x=State.player.hand.splice(i,1)[0];
+    setPick(elements.playerPick, toKey(x));  // assets usan R/P/S
   }
-  const c=cpuChoose(); setPick(el.cpuPick, toKey(c));
-  S.cpu.score++; el.cpuScore.textContent=S.cpu.score;
-  setFace(el.cpuImg,'happy'); setFace(el.playerImg,'sad');
+  const c=cpuChoose(); setPick(elements.cpuPick, toKey(c));
+  State.cpu.score++; elements.cpuScore.textContent=State.cpu.score;
+  setFace(elements.cpuImg,'happy'); setFace(elements.playerImg,'sad');
 
   const o = getPhraseObj('pointCpu'); 
   toast(o.text, { bg:o.color });
@@ -186,24 +185,24 @@ function onTimeout(){
 }
 
 function choose(sym){ // sym = PIEDRA/PAPEL/TIJERA
-  if(!S.roundActive || S.timeLeft<=0 || !S.player.hand.includes(sym)) return;
+  if(!State.roundActive || State.timeLeft<=0 || !State.player.hand.includes(sym)) return;
 
-  consume(S.player.hand,sym); setPick(el.playerPick, toKey(sym));
-  const c=cpuChoose();        setPick(el.cpuPick,   toKey(c));
+  consume(State.player.hand,sym); setPick(elements.playerPick, toKey(sym));
+  const c=cpuChoose();            setPick(elements.cpuPick,   toKey(c));
 
   const r=judge(sym,c);
   if(r===1){
-    S.player.score++; el.playerScore.textContent=S.player.score;
-    setFace(el.playerImg,'happy'); setFace(el.cpuImg,'sad');
-    const o=getPhraseObj('pointPlayer', el.playerName.value);
+    State.player.score++; elements.playerScore.textContent=State.player.score;
+    setFace(elements.playerImg,'happy'); setFace(elements.cpuImg,'sad');
+    const o=getPhraseObj('pointPlayer', elements.playerName.value);
     toast(o.text, { bg:o.color });
   }else if(r===-1){
-    S.cpu.score++; el.cpuScore.textContent=S.cpu.score;
-    setFace(el.cpuImg,'happy'); setFace(el.playerImg,'sad');
+    State.cpu.score++; elements.cpuScore.textContent=State.cpu.score;
+    setFace(elements.cpuImg,'happy'); setFace(elements.playerImg,'sad');
     const o=getPhraseObj('pointCpu');
     toast(o.text, { bg:o.color });
   }else{
-    setFace(el.playerImg,'tie'); setFace(el.cpuImg,'tie');
+    setFace(elements.playerImg,'tie'); setFace(elements.cpuImg,'tie');
     const o=getPhraseObj('tie');
     toast(o.text, { bg:o.color });
   }
@@ -211,37 +210,37 @@ function choose(sym){ // sym = PIEDRA/PAPEL/TIJERA
 }
 
 function finishTurn(){
-  S.roundActive=false;
-  if(S.countdown){ clearInterval(S.countdown); S.countdown=null; }
+  State.roundActive=false;
+  if(State.countdown){ clearInterval(State.countdown); State.countdown=null; }
   updateCounts(); saveState(snap());
-  if(!S.player.hand.length && !S.cpu.hand.length) endGame();
+  if(!State.player.hand.length && !State.cpu.hand.length) endGame();
   else setTimeout(()=>startTurn(true),700);
 }
 
 function endGame(){
-  S.gameActive=false; S.roundActive=false;
-  if(S.countdown){ clearInterval(S.countdown); S.countdown=null; }
+  State.gameActive=false; State.roundActive=false;
+  if(State.countdown){ clearInterval(State.countdown); State.countdown=null; }
 
-  if(S.player.score>S.cpu.score){
-    setFace(el.playerImg,'win'); setFace(el.cpuImg,'lose');
-    const o = getPhraseObj('win', el.playerName.value);
-    toast(o.text || `Nuevo rey: ${el.playerName.value||'Jugador'}`, { bg:o.color });
-  }else if(S.cpu.score>S.player.score){
-    setFace(el.playerImg,'lose'); setFace(el.cpuImg,'win');
-    const o = getPhraseObj('lose', el.playerName.value);
+  if(State.player.score>State.cpu.score){
+    setFace(elements.playerImg,'win'); setFace(elements.cpuImg,'lose');
+    const o = getPhraseObj('win', elements.playerName.value);
+    toast(o.text || `Nuevo rey: ${elements.playerName.value||'Jugador'}`, { bg:o.color });
+  }else if(State.cpu.score>State.player.score){
+    setFace(elements.playerImg,'lose'); setFace(elements.cpuImg,'win');
+    const o = getPhraseObj('lose', elements.playerName.value);
     toast(o.text || 'Nuevo rey: CPU', { bg:o.color });
   }else{
-    setFace(el.playerImg,'tie'); setFace(el.cpuImg,'tie');
-    el.timerText.textContent='00:00';
-    const o = getPhraseObj('tie', el.playerName.value);
+    setFace(elements.playerImg,'tie'); setFace(elements.cpuImg,'tie');
+    elements.timerText.textContent='00:00';
+    const o = getPhraseObj('tie', elements.playerName.value);
     toast(o.text || 'Empate', { bg:o.color });
   }
 
   // Registrar resultado en historial
   pushHistorial({
-    nombre: el.playerName.value || 'Jugador',
-    puntosJugador: S.player.score,
-    puntosCpu: S.cpu.score,
+    nombre: elements.playerName.value || 'Jugador',
+    puntosJugador: State.player.score,
+    puntosCpu: State.cpu.score,
     huyo: false
   });
 
@@ -251,11 +250,11 @@ function endGame(){
 //render historial
 function renderHistorial(){
   const arr = leerHistorial().slice().reverse();
-  el.historyList.innerHTML='';
+  elements.historyList.innerHTML='';
   if(!arr.length){
     const li=document.createElement('li');
     li.textContent='Sin partidas todavía.';
-    el.historyList.appendChild(li);
+    elements.historyList.appendChild(li);
     return;
   }
   arr.forEach(e=>{
@@ -263,90 +262,90 @@ function renderHistorial(){
     li.textContent = `[${formatearFecha(e.ts)}] ` +
                     (e.huyo ? `${e.nombre} huyó 🏃‍♂️💨`
                             : `${e.nombre} ${e.puntosJugador} — CPU ${e.puntosCpu}`);
-    el.historyList.appendChild(li);
+    elements.historyList.appendChild(li);
   });
 }
 
 //eventos
-el.btnStart.onclick = startGame;
+elements.btnStart.onclick = startGame;
 
-el.btnReset.onclick = ()=>{
-  if(el.btnReset.disabled) return;
-  const nombre = el.playerName.value || 'Jugador';
+elements.btnReset.onclick = ()=>{
+  if(elements.btnReset.disabled) return;
+  const nombre = elements.playerName.value || 'Jugador';
   toast(`${nombre} huyó`);
   pushHistorial({
     nombre,
-    puntosJugador: S.player.score,
-    puntosCpu: S.cpu.score,
+    puntosJugador: State.player.score,
+    puntosCpu: State.cpu.score,
     huyo: true
   });
   clearSaveState(); renderHistorial();
-  if(S.countdown){ clearInterval(S.countdown); S.countdown=null; }
-  S.gameActive=false; S.roundActive=false; S.timeLeft=3;
-  el.playerScore.textContent='0'; el.cpuScore.textContent='0';
+  if(State.countdown){ clearInterval(State.countdown); State.countdown=null; }
+  State.gameActive=false; State.roundActive=false; State.timeLeft=3;
+  elements.playerScore.textContent='0'; elements.cpuScore.textContent='0';
   neutralBoard(); updateCounts(); setControls();
 };
 
-el.btnContinue.onclick = ()=>{
-  if(el.btnContinue.disabled) return;
+elements.btnContinue.onclick = ()=>{
+  if(elements.btnContinue.disabled) return;
   const s=loadState(); if(!s||!s.incomplete) return;
 
-  S.playerName = s.playerName || 'Jugador';
-  S.player     = s.player     || S.player;
-  S.cpu        = s.cpu        || S.cpu;
-  S.player.hand = normalizeHand(S.player.hand);
-  S.cpu.hand    = normalizeHand(S.cpu.hand);
+  State.playerName = s.playerName || 'Jugador';
+  State.player     = s.player     || State.player;
+  State.cpu        = s.cpu        || State.cpu;
+  State.player.hand = normalizeHand(State.player.hand);
+  State.cpu.hand    = normalizeHand(State.cpu.hand);
 
-  S.gameActive = !!s.gameActive;
-  S.roundActive= !!s.roundActive;
-  S.timeLeft   = typeof s.timeLeft==='number' ? Math.max(0,s.timeLeft) : 3;
+  State.gameActive = !!s.gameActive;
+  State.roundActive= !!s.roundActive;
+  State.timeLeft   = typeof s.timeLeft==='number' ? Math.max(0,s.timeLeft) : 3;
 
-  el.playerName.value = S.playerName;
-  el.playerScore.textContent = S.player.score;
-  el.cpuScore.textContent    = S.cpu.score;
-  el.timerText.textContent   = fmtClock(S.timeLeft);
+  elements.playerName.value = State.playerName;
+  elements.playerScore.textContent = State.player.score;
+  elements.cpuScore.textContent    = State.cpu.score;
+  elements.timerText.textContent   = fmtClock(State.timeLeft);
 
-  setControls(); updateCounts(); setPick(el.playerPick,''), setPick(el.cpuPick,'');
-  if(!S.roundActive) startTurn(true); else { runTick(); }
+  setControls(); updateCounts(); setPick(elements.playerPick,''), setPick(elements.cpuPick,'');
+  if(!State.roundActive) startTurn(true); else { runTick(); };
 };
 
-el.btnPiedra.onclick = ()=>choose(PIEDRA);
-el.btnPapel.onclick  = ()=>choose(PAPEL);
-el.btnTijera.onclick = ()=>choose(TIJERA);
+elements.btnPiedra.onclick = ()=>choose(PIEDRA);
+elements.btnPapel.onclick  = ()=>choose(PAPEL);
+elements.btnTijera.onclick = ()=>choose(TIJERA);
 
-el.btnClearHistory.onclick = (ev)=>{
+elements.btnClearHistory.onclick = (ev)=>{
   ev.preventDefault(); ev.stopPropagation();
   borrarHistorial(); renderHistorial();
   const o = getPhraseObj('brrHistorial');
   toast(o.text, { bg:o.color });
-  if(el.histDetails && !el.histDetails.open) el.histDetails.open = true;
+  if(elements.histDetails && !elements.histDetails.open) elements.histDetails.open = true;
 };
 
 // guardar al cerrar
-window.addEventListener('beforeunload', ()=>{ if(S.gameActive||S.roundActive) saveState(snap()); });
+window.addEventListener('beforeunload', ()=>{ if(State.gameActive||State.roundActive) saveState(snap()); });
 
 //inicialización
 (function(){
   const savedName = cargarNombreJugador();
-  if(savedName){ el.playerName.value = savedName; S.playerName = savedName; }
+  if(savedName){ elements.playerName.value = savedName; State.playerName = savedName; }
 
-  setPick(el.playerPick,''); setPick(el.cpuPick,'');   // “vacio.png”
-  el.timerText.textContent = fmtClock(S.timeLeft);
+  setPick(elements.playerPick,''); setPick(elements.cpuPick,'');   // “vacio.png”
+  elements.timerText.textContent = fmtClock(State.timeLeft);
 
   setControls();
-  if (hasSave() && !S.gameActive) previewSavedCounts();
+  if (hasSave() && !State.gameActive) previewSavedCounts();
 
   renderHistorial(); updateCounts();
 })();
 
 //cambio de nombre 
-el.playerName.addEventListener('change', ()=>{
-  let max = el.playerName.maxLength || 20;
-  let n = el.playerName.value.trim() || 'Jugador';
+elements.playerName.addEventListener('change', ()=>{
+  let max = elements.playerName.maxLength || 20;
+  let n = elements.playerName.value.trim() || 'Jugador';
   if(n.length>max) n=n.slice(0,max);
-  el.playerName.value = n;
-  if(n !== S.playerName){
-    S.playerName = n;
+  elements.playerName.value = n;
+  if(n !== State.playerName){
+    State.playerName = n;
     guardarNombreJugador(n);
     const o = getPhraseObj('newPlayer', n);
     toast(o.text, { bg:o.color });
