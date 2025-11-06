@@ -1,0 +1,91 @@
+:root{
+  --bg:#ffcb5c;
+  --box:#ff6b6b;
+  --ink:#1a1200;
+  --lcd-bg:#000;
+  --lcd-fg:#f00;
+}
+
+/* Base */
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,Segoe UI,Roboto,Arial}
+.app{max-width:900px;margin:24px auto;padding:16px}
+.app-header{margin-bottom:12px}
+
+/* Tablero: ensanchamos el centro para un timer horizontal lindo */
+.board{
+  display:grid;
+  grid-template-columns:1fr 260px 1fr; /* centro más ancho */
+  gap:16px;
+}
+
+/* Paneles */
+.panel{
+  background:var(--box);
+  padding:12px;
+  border:none;
+  border-radius:25px;
+  display:flex;flex-direction:column;gap:10px;
+}
+
+/* Avatares */
+.avatar{display:flex;align-items:center;gap:10px}
+.face-box{width:84px;height:84px;border-radius:25px;background:#fff6;display:flex;align-items:center;justify-content:center}
+.face-img{width:72px;height:72px;object-fit:contain}
+.flip-x{transform:scaleX(-1);} /* CPU mirando a la izquierda */
+
+/* Nombre y puntaje */
+.name-input{border:none;background:transparent;font-weight:900;font-size:20px;color:var(--ink)}
+.name-input:focus{outline:2px dashed var(--ink);outline-offset:4px}
+.score{font-weight:900}
+
+/* Jugadas */
+.pick{min-height:84px;border-radius:25px;background:#fff6;display:flex;align-items:center;justify-content:center}
+.pick-img{height:64px;object-fit:contain}
+.pixel,.pick-img,.face-img{image-rendering:pixelated;image-rendering:crisp-edges;-ms-interpolation-mode:nearest-neighbor}
+
+/* Contador LCD horizontal */
+.counter{
+  height:100px; /* más horizontal */
+  border-radius:25px;
+  background:var(--lcd-bg);
+  color:var(--lcd-fg);
+  display:flex;align-items:center;justify-content:center;
+  gap:14px;
+  padding:0 18px;
+}
+#timerText{
+  font:900 46px/1 monospace;
+  text-shadow:0 0 6px #f00,0 0 12px #f33,0 0 20px #f66;
+}
+.timer-face{
+  font:900 28px/1 monospace;
+  margin-top:4px;
+  text-shadow:0 0 6px #f00;
+}
+
+/* Controles */
+.controls{margin-top:16px}
+.bar{display:flex;gap:10px;justify-content:center}
+
+/* Botones de elección */
+.choice{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 14px;background:#ffd788;border:none;border-radius:25px;
+  font-weight:900;cursor:pointer
+}
+.choice[disabled]{opacity:.45;cursor:not-allowed}
+.bicon{width:28px;height:28px;object-fit:contain}
+.bcount{background:#fff;padding:2px 10px;border-radius:14px;min-width:28px;text-align:center}
+
+/* Botones utilitarios */
+.util{padding:8px 14px;background:#ffc46b;border:none;border-radius:25px;font-weight:900;cursor:pointer}
+.util[disabled]{opacity:.45;cursor:not-allowed}
+.util.danger{background:#ff9aa2}
+
+/* Historial */
+.history details{margin-top:16px}
+.history summary{cursor:pointer;font-weight:900}
+.history ul{margin:8px 0 0 16px}
+.hist-actions{display:none;margin-top:8px;margin-left:16px}
+details[open] .hist-actions{display:flex;gap:10px}

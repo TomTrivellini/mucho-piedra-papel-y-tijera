@@ -1,0 +1,9 @@
+[
+  {"type":"win","text":"¡Punto para {name}!"},
+  {"type":"win","text":"{name} mete presión 🔥"},
+  {"type":"win","text":"{name} domina la ronda 👑"},
+  {"type":"lose","text":"CPU +1 💥"},
+  {"type":"lose","text":"La CPU te ganó esta 😅"},
+  {"type":"tie","text":"Empate 🤝"},
+  {"type":"tie","text":"Nada por aquí…"}
+]
