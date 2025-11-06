@@ -1,13 +1,13 @@
-/* ===== Claves de LocalStorage (humanas) ===== */
-const SAVE       = 'rps_save_v1';         // estado de partida para "Continuar"
-const HISTORIAL  = 'rps_historial_v1';    // historial de partidas
-const PREFERENCIAS = 'rps_prefs_v1';      // preferencias de usuario (nombre)
 
-/* ===== Estado de partida ===== */
+const SAVE       = 'rps_save_v1';         
+const HISTORIAL  = 'rps_historial_v1';    
+const PREFERENCIAS = 'rps_prefs_v1';      
+
+
 window.saveState = function (estado) {
   try {
     localStorage.setItem(SAVE, JSON.stringify({ ...estado, ts: Date.now() }));
-  } catch (_) { /* silencioso */ }
+  } catch (_) {  }
 };
 
 window.loadState = function () {
@@ -19,16 +19,13 @@ window.clearSaveState = function () {
   try { localStorage.removeItem(SAVE); } catch (_) {}
 };
 
-/* ===== Historial =====
-   Estructura de cada entrada:
-   { ts:Number, nombre:String, puntosJugador:Number, puntosCpu:Number, huyo:Boolean }
-*/
+
 window.pushHistorial = function (entrada) {
   try {
     const arr = JSON.parse(localStorage.getItem(HISTORIAL) || '[]');
     arr.push({ ts: Date.now(), ...entrada });
     localStorage.setItem(HISTORIAL, JSON.stringify(arr));
-  } catch (_) { /* silencioso */ }
+  } catch (_) { }
 };
 
 window.leerHistorial = function () {

@@ -4,14 +4,14 @@ const PIEDRA = 'PIEDRA';
 const PAPEL  = 'PAPEL';
 const TIJERA = 'TIJERA';
 
-// normalizadores (para pintar assets que usan R/P/S)
+
 const toKey = w => (w===PIEDRA?'R' : w===PAPEL?'P' : w===TIJERA?'S' : null);
 const normalizeHand = arr => Array.isArray(arr) ? arr.map(x=>{
   if (x==='R') return PIEDRA; if (x==='P') return PAPEL; if (x==='S') return TIJERA;
   return (x===PIEDRA||x===PAPEL||x===TIJERA) ? x : null;
 }).filter(Boolean) : [];
 
-// Estado de la partida
+
 const State = {
   playerName: 'Jugador',
   player: { hand: [], score: 0 },
@@ -22,7 +22,7 @@ const State = {
   timeLeft:    3
 };
 
-// Referencias DOM
+
 const elements = {
   playerName:  getById('playerName'),
   playerImg:   getById('playerImg'),  playerScore: getById('playerScore'), playerPick: getById('playerPick'),
@@ -34,7 +34,7 @@ const elements = {
   histDetails: getById('histDetails'), historyList: getById('historyList'), btnClearHistory: getById('btnClearHistory')
 };
 
-// util
+
 const count = hand => {
   const h = normalizeHand(hand);
   return {
@@ -49,7 +49,7 @@ const judge    = (p,c)=> p===c ? 0
   : ((p===PIEDRA&&c===TIJERA)||(p===PAPEL&&c===PIEDRA)||(p===TIJERA&&c===PAPEL)) ? 1 : -1;
 const fmtClock = s => `00:${String(s).padStart(2,'0')}`;
 
-// snapshot y carga
+
 const snap = () => ({
   playerName: elements.playerName.value?.trim() || 'Jugador',
   player: State.player, cpu: State.cpu,
@@ -59,7 +59,6 @@ const snap = () => ({
 });
 const hasSave = () => { const s = loadState(); return !!(s && s.incomplete); };
 
-//ui
 function updateCounts(){
   const pc = count(State.player.hand);
   elements.cntPiedra.textContent = pc.PIEDRA;
@@ -76,22 +75,22 @@ function previewSavedCounts(){
   const s = loadState();
   if(!s || !s.incomplete || !s.player || !Array.isArray(s.player.hand)) return;
 
-  // contadores desde el SAVE (sin tocar State)
+
   const pc = count(s.player.hand);
   elements.cntPiedra.textContent = pc.PIEDRA;
   elements.cntPapel.textContent  = pc.PAPEL;
   elements.cntTijera.textContent = pc.TIJERA;
 
-  // puntajes actuales del SAVE
+
   elements.playerScore.textContent = (s.player && typeof s.player.score==='number') ? s.player.score : 0;
   elements.cpuScore.textContent    = (s.cpu    && typeof s.cpu.score==='number')    ? s.cpu.score    : 0;
 
-  // elecciones bloqueadas hasta continuar
+
   elements.btnPiedra.disabled = true;
   elements.btnPapel.disabled  = true;
   elements.btnTijera.disabled = true;
 
-  // reloj con tiempo restante real
+
   if (typeof s.timeLeft === 'number')
     elements.timerText.textContent = fmtClock(Math.max(0, s.timeLeft));
 }
@@ -118,7 +117,7 @@ function neutralBoard(){
   elements.timerText.textContent = fmtClock(State.timeLeft);
 }
 
-// mazo y reparto
+
 function deck(){
   const d = [PIEDRA,PIEDRA,PIEDRA,PIEDRA, PAPEL,PAPEL,PAPEL,PAPEL, TIJERA,TIJERA,TIJERA,TIJERA];
   for(let i=d.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [d[i],d[j]]=[d[j],d[i]]; }
@@ -133,7 +132,7 @@ function deal(){
   neutralBoard(); updateCounts();
 }
 
-// juego
+
 function startGame(){
   if(State.gameActive) return;
   deal();
@@ -172,7 +171,7 @@ function onTimeout(){
   if(State.player.hand.length){
     const i=(Math.random()*State.player.hand.length)|0;
     const x=State.player.hand.splice(i,1)[0];
-    setPick(elements.playerPick, toKey(x));  // assets usan R/P/S
+    setPick(elements.playerPick, toKey(x));  
   }
   const c=cpuChoose(); setPick(elements.cpuPick, toKey(c));
   State.cpu.score++; elements.cpuScore.textContent=State.cpu.score;
@@ -184,7 +183,7 @@ function onTimeout(){
   finishTurn();
 }
 
-function choose(sym){ // sym = PIEDRA/PAPEL/TIJERA
+function choose(sym){ 
   if(!State.roundActive || State.timeLeft<=0 || !State.player.hand.includes(sym)) return;
 
   consume(State.player.hand,sym); setPick(elements.playerPick, toKey(sym));
@@ -236,7 +235,7 @@ function endGame(){
     toast(o.text || 'Empate', { bg:o.color });
   }
 
-  // Registrar resultado en historial
+
   pushHistorial({
     nombre: elements.playerName.value || 'Jugador',
     puntosJugador: State.player.score,
@@ -247,26 +246,25 @@ function endGame(){
   clearSaveState(); renderHistorial(); setControls();
 }
 
-//render historial
+
 function renderHistorial(){
   const arr = leerHistorial().slice().reverse();
   elements.historyList.innerHTML='';
   if(!arr.length){
     const li=document.createElement('li');
-    li.textContent='Sin partidas todavía.';
+    li.textContent='juega conmigo.';
     elements.historyList.appendChild(li);
     return;
   }
   arr.forEach(e=>{
     const li=document.createElement('li');
-    li.textContent = `[${formatearFecha(e.ts)}] ` +
-                    (e.huyo ? `${e.nombre} huyó 🏃‍♂️💨`
-                            : `${e.nombre} ${e.puntosJugador} — CPU ${e.puntosCpu}`);
+    li.textContent = e.huyo ? `${e.nombre} huyó 🏃‍♂️💨`
+                            : `${e.nombre} ${e.puntosJugador} — CPU ${e.puntosCpu}`;
     elements.historyList.appendChild(li);
   });
 }
 
-//eventos
+
 elements.btnStart.onclick = startGame;
 
 elements.btnReset.onclick = ()=>{
@@ -321,10 +319,10 @@ elements.btnClearHistory.onclick = (ev)=>{
   if(elements.histDetails && !elements.histDetails.open) elements.histDetails.open = true;
 };
 
-// guardar al cerrar
+
 window.addEventListener('beforeunload', ()=>{ if(State.gameActive||State.roundActive) saveState(snap()); });
 
-//inicialización
+
 (function(){
   const savedName = cargarNombreJugador();
   if(savedName){ elements.playerName.value = savedName; State.playerName = savedName; }
@@ -338,7 +336,7 @@ window.addEventListener('beforeunload', ()=>{ if(State.gameActive||State.roundAc
   renderHistorial(); updateCounts();
 })();
 
-//cambio de nombre 
+
 elements.playerName.addEventListener('change', ()=>{
   let max = elements.playerName.maxLength || 20;
   let n = elements.playerName.value.trim() || 'Jugador';
@@ -352,7 +350,7 @@ elements.playerName.addEventListener('change', ()=>{
   }
 });
 
-//Frases de JSON 
+
 (async ()=>{
   try{
     const res = await fetch('script/phrases.json',{cache:'no-store'});
