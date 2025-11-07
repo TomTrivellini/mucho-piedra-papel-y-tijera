@@ -5,13 +5,6 @@ const PAPEL  = 'PAPEL';
 const TIJERA = 'TIJERA';
 
 
-const toKey = w => (w===PIEDRA?'R' : w===PAPEL?'P' : w===TIJERA?'S' : null);
-const normalizeHand = arr => Array.isArray(arr) ? arr.map(x=>{
-  if (x==='R') return PIEDRA; if (x==='P') return PAPEL; if (x==='S') return TIJERA;
-  return (x===PIEDRA||x===PAPEL||x===TIJERA) ? x : null;
-}).filter(Boolean) : [];
-
-
 const State = {
   playerName: 'Jugador',
   player: { hand: [], score: 0 },
@@ -35,14 +28,11 @@ const elements = {
 };
 
 
-const count = hand => {
-  const h = normalizeHand(hand);
-  return {
-    PIEDRA: h.filter(x=>x===PIEDRA).length,
-    PAPEL:  h.filter(x=>x===PAPEL).length,
-    TIJERA: h.filter(x=>x===TIJERA).length
-  };
-};
+const count = hand => ({
+  PIEDRA: hand.filter(x=>x===PIEDRA).length,
+  PAPEL:  hand.filter(x=>x===PAPEL).length,
+  TIJERA: hand.filter(x=>x===TIJERA).length
+});
 const consume  = (h,s) => { const i=h.indexOf(s); if(i>-1) h.splice(i,1); };
 const rand     = h => h[(Math.random()*h.length)|0];
 const judge    = (p,c)=> p===c ? 0
@@ -171,9 +161,9 @@ function onTimeout(){
   if(State.player.hand.length){
     const i=(Math.random()*State.player.hand.length)|0;
     const x=State.player.hand.splice(i,1)[0];
-    setPick(elements.playerPick, toKey(x));  
+    setPick(elements.playerPick, x);  
   }
-  const c=cpuChoose(); setPick(elements.cpuPick, toKey(c));
+  const c=cpuChoose(); setPick(elements.cpuPick, c);
   State.cpu.score++; elements.cpuScore.textContent=State.cpu.score;
   setFace(elements.cpuImg,'happy'); setFace(elements.playerImg,'sad');
 
@@ -186,8 +176,8 @@ function onTimeout(){
 function choose(sym){ 
   if(!State.roundActive || State.timeLeft<=0 || !State.player.hand.includes(sym)) return;
 
-  consume(State.player.hand,sym); setPick(elements.playerPick, toKey(sym));
-  const c=cpuChoose();            setPick(elements.cpuPick,   toKey(c));
+  consume(State.player.hand,sym); setPick(elements.playerPick, sym);
+  const c=cpuChoose();            setPick(elements.cpuPick,   c);
 
   const r=judge(sym,c);
   if(r===1){
@@ -291,8 +281,8 @@ elements.btnContinue.onclick = ()=>{
   State.playerName = s.playerName || 'Jugador';
   State.player     = s.player     || State.player;
   State.cpu        = s.cpu        || State.cpu;
-  State.player.hand = normalizeHand(State.player.hand);
-  State.cpu.hand    = normalizeHand(State.cpu.hand);
+  State.player.hand = Array.isArray(State.player.hand) ? State.player.hand : [];
+  State.cpu.hand    = Array.isArray(State.cpu.hand) ? State.cpu.hand : [];
 
   State.gameActive = !!s.gameActive;
   State.roundActive= !!s.roundActive;

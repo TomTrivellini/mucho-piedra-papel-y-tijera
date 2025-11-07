@@ -60,15 +60,16 @@ input, button{
     -ms-interpolation-mode:nearest-neighbor}
 
 .name-input{
-  font-family: 'Tiny5';
   display:inline-block;
   background:var(--bg);
   border:none;
   border-radius: 25px;
   color:var(--ink);
-  font:900 20px/1.2 system-ui;
+  font-family: 'Tiny5', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  line-height: 1.2;
   text-align: center;
-  
 }
 .name-input:focus{outline:2px dashed var(--ink)}
 .name-input:hover{color: var(--box);}
@@ -86,7 +87,10 @@ input, button{
   margin:auto; 
 }
 #timerText{
-  font:900 48px/1 monospace;
+  font-family: 'Tiny5', sans-serif;
+  font-weight: 900;
+  font-size: 48px;
+  line-height: 1;
   text-shadow: var(--lcd-fg);
 }
 
@@ -140,20 +144,39 @@ input, button{
   .util:hover{background:var(--box)}
 
 
-.history{
+.history {
   background-color: var(--box);
-  
   max-width:40vh;
   margin:1vh auto;
   border-radius: 25px; 
-  padding: 2vh;}
+  padding: 2vh;
+  text-align: center;
+}
 
-  .history summary{
-    cursor:pointer;
-    font-weight:900;
-    margin-bottom:1vh;
-  }
+.history summary {
+  cursor:pointer;
+  font-weight:900;
+  margin-bottom:1vh;
+  list-style: none;
+}
 
+.history summary::-webkit-details-marker {
+  display: none;
+}
+
+.history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history li {
+  margin: 0.5vh 0;
+}
+
+.hist-actions {
+  margin: 1vh 0;
+}
 
 .btn-music{
   inline-size: 40px;

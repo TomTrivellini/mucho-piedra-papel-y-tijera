@@ -55,9 +55,9 @@ window.ASSETS = {
     tie:'style/assets/emotes/empate.png'
   },
   cards:{
-    R:'style/assets/piedra.png',
-    P:'style/assets/papel.png',
-    S:'style/assets/tijeras.png',
+    PIEDRA:'style/assets/piedra.png',
+    PAPEL:'style/assets/papel.png',
+    TIJERA:'style/assets/tijeras.png',
     X:'style/assets/vacio.png'
   }
 };
