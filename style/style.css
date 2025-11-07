@@ -21,6 +21,11 @@ body {
   font-size:x-large
 }
 
+h1{
+  font-size:medium;
+  text-align:center;
+  
+}
 input, button{
   font-family: 'Tiny5', sans-serif;
 }
@@ -31,6 +36,7 @@ input, button{
   margin:20px auto 10px;
   background-color: var(--box);
   border-radius: 15px;
+  
 }
 
 
@@ -40,8 +46,22 @@ input, button{
   padding:1vh;
   display:flex;
 }
-.player-row{justify-content: flex-start; }
+.player-row{justify-content: flex-start;}
 .cpu-row{ justify-content:flex-end; }
+
+.player-row h3{
+  margin: 0;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-row .name-input{
+  width: 100%;
+  max-width: 18vh; 
+  box-sizing: border-box;
+}
 
 
 .face-img{
@@ -181,10 +201,10 @@ input, button{
 .btn-music{
   inline-size: 40px;
   block-size: 28px;
-  border: 2px solid #c92c49d3;
-  border-radius: 999px;
-  background: #f9a724da;
-  color: #c92c49d3;
+  border: var(--bg);
+  border-radius: 25px;
+  background: var(--box);
+  color: var(--bg);
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;

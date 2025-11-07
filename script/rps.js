@@ -328,7 +328,7 @@ window.addEventListener('beforeunload', ()=>{ if(State.gameActive||State.roundAc
 
 
 elements.playerName.addEventListener('change', ()=>{
-  let max = elements.playerName.maxLength || 20;
+  let max = elements.playerName.maxLength || 13;
   let n = elements.playerName.value.trim() || 'Jugador';
   if(n.length>max) n=n.slice(0,max);
   elements.playerName.value = n;
